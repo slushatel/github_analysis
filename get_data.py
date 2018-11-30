@@ -9,3 +9,6 @@ class GetData:
 
     def get_stackoverflow_sample_repos(self):
         return self._google_client.get_stackoverflow_sample_repos()
+
+    def get_github_sample_repos(self):
+        return self._google_client.get_github_sample_repos()
