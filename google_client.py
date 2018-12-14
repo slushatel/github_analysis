@@ -1,10 +1,14 @@
 from google.cloud import bigquery
+import pkgutil
 
 
 class GoogleClient:
     _client = bigquery.Client()
 
     def get_stackoverflow_sample_repos(self):
+        queries = pkgutil.get_data("", "queries.json")
+
+
         job_config = bigquery.QueryJobConfig()
         job_config.dry_run = True
         job_config.use_query_cache = False

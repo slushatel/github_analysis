@@ -5,9 +5,9 @@ import get_data
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write('<a href="%s">get_stackoverflow_sample_repos</a>' %
+        self.write('<p><a href="%s">get_stackoverflow_sample_repos</a>' %
                    self.reverse_url("function", "get_stackoverflow_sample_repos"))
-        self.write('<a href="%s">get_github_sample_repos</a>' %
+        self.write('<p><a href="%s">get_github_sample_repos</a>' %
                    self.reverse_url("function", "get_github_sample_repos"))
 
 
