@@ -1,3 +1,18 @@
+#standardSQL
+--SELECT id FROM [githubarchive:day.20181214] where actor.login="slushatel" LIMIT 1000
+--SELECT *  FROM `githubarchive.day.20181214` where type= "PushEvent" and actor.login="slushatel"
+
+--SELECT * FROM `bigquery-public-data.github_repos.languages` where repo_name="Talend/connectors-se" LIMIT 1000
+
+--Select id from `ghtorrent-bq.ght_2018_04_01.users` where login = "slushatel"
+--Select id, name, language,	created_at from `ghtorrent-bq.ght_2018_04_01.projects` where owner_id = 1502510
+--Select * from `ghtorrent-bq.ght_2018_04_01.project_languages` where project_id in (19418155, 2502049, 18237756, 25279965, 32219745, 32221319)
+Select language, SUM(bytes) bytes from `ghtorrent-bq.ght_2017_05_01.project_languages` GROUP BY language ORDER BY bytes DESC LIMIT 10
+--Select language, SUM(bytes) bytes from `ghtorrent-bq.ght_2017_09_01.project_languages` GROUP BY language ORDER BY bytes DESC LIMIT 10
+--Select language, SUM(bytes) bytes from `ghtorrent-bq.ght_2018_04_01.project_languages` GROUP BY language ORDER BY bytes DESC LIMIT 10
+
+--------------------------------------------------
+
 SELECT max(created_at) as created_at FROM [ghtorrent-bq:ght.projects]
 [
   {
