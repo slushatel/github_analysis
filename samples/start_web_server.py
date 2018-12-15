@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import get_data
+from modules import get_data
 
 PORT_NUMBER = 8080
 

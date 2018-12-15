@@ -11,8 +11,7 @@ It uses BigQuery to analyse GitHub archived data
 1. You should see the page with clickable links
 
 #### <a name="rdep"></a>To resolve dependencies you can run:
-> pip install tornado \
-> pip install google-cloud-bigquery
+> pip install -r requirements.txt
 
 #### To use Google API:
 - create a project and add BigQuery API to it

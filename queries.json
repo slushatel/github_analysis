@@ -1,3 +1,0 @@
-{"query1":
-  "SELECT repo_name, COUNT(*) watch_count FROM [githubarchive:month.201605], [githubarchive:month.201604], [githubarchive:month.201603], [githubarchive:month.201602], [githubarchive:month.201601] WHERE type='WatchEvent' GROUP BY 1 HAVING watch_count >= 2 ORDER BY watch_count DESC LIMIT 400000"
-}

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<queries>
+    <query>
+        <id>watch_count_by_repo</id>
+        <text>watch count by repo</text>
+        <query_text>
+            SELECT repo_name, COUNT(*) watch_count
+            FROM [githubarchive:month.201605], [githubarchive:month.201604],
+            [githubarchive:month.201603], [githubarchive:month.201602], [githubarchive:month.201601]
+            WHERE type='WatchEvent'
+            GROUP BY 1
+            HAVING watch_count >= 2
+            ORDER BY watch_count DESC LIMIT 400000
+        </query_text>
+    </query>
+    <query>
+        <id>watch_count_by_sample_repos</id>
+        <text>watch count by sample repos</text>
+        <query_text>
+            SELECT * FROM `bigquery-public-data.github_repos.sample_repos` order by watch_count limit 10
+        </query_text>
+    </query>
+</queries>
