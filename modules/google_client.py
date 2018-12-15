@@ -20,7 +20,8 @@ class GoogleClient:
         # run to get data
         query_job = self._client.query(query)
         results = query_job.result()  # Waits for job to complete.
-        json = results.to_dataframe().to_json()
-        return json
+        df = results.to_dataframe()
+        json = df.to_json()
+        return df
         # for row in results:
         #     print("{} : {} views".format(row.url, row.view_count))

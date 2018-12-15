@@ -2,7 +2,7 @@
 <queries>
     <query>
         <id>watch_count_by_repo</id>
-        <text>watch count by repo</text>
+        <text>Watch count by repo</text>
         <query_text>
             SELECT repo_name, COUNT(*) watch_count
             FROM [githubarchive:month.201605], [githubarchive:month.201604],
@@ -15,9 +15,31 @@
     </query>
     <query>
         <id>watch_count_by_sample_repos</id>
-        <text>watch count by sample repos</text>
+        <text>Watch count by sample repos</text>
         <query_text>
             SELECT * FROM `bigquery-public-data.github_repos.sample_repos` order by watch_count limit 10
+        </query_text>
+    </query>
+    <query>
+        <id>pull_request_count_by_lang</id>
+        <text>Pull request count by language</text>
+        <query_text>
+            SELECT name as language, sum(pull_cnt) as pull_requests
+            FROM ( SELECT t.*,
+            (bytes / sum(bytes) over(partition by t.repo_name))*arh.cnt pull_cnt
+            FROM ((SELECT tt.repo_name, l.*
+            FROM `bigquery-public-data.github_repos.languages` tt
+            JOIN UNNEST(tt.language) l ) t
+            JOIN (SELECT repo.name as repo_name,
+            count( * ) cnt
+            FROM `githubarchive.day.20160110` d
+            WHERE d.type="PullRequestEvent"
+            GROUP BY 1) arh ON arh.repo_name = t.repo_name
+            )
+            )
+            GROUP BY 1
+            ORDER BY 2 DESC
+            LIMIT 10
         </query_text>
     </query>
 </queries>
