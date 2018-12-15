@@ -28,11 +28,10 @@ class FunctionHandler(tornado.web.RequestHandler):
 
     def __get_query(self, query_id):
         for query in queries['queries']['query']:
-            if query["id"]==query_id :
+            if query["id"] == query_id:
                 return query["query_text"]
 
     def __get_data(self, query_id):
-        # return get_data.GetData().__getattribute__(function_id)().encode()
         query = self.__get_query(query_id)
         try:
             query_result = get_data.GetData().runQuery(query)
@@ -44,11 +43,16 @@ class FunctionHandler(tornado.web.RequestHandler):
         return data
 
 
-if __name__ == "__main__":
+def get_queries_from_file():
     DIR_PROJECT_ROOT = (Path(__file__).parent.parent.resolve())
     print("project_root: {}".format(DIR_PROJECT_ROOT))
     DIR_RESOURCES = os.path.join(DIR_PROJECT_ROOT, "resources")
     queries = xmltodict.parse(open(os.path.join(DIR_RESOURCES, "queries.xml")).read())
+    return queries
+
+
+if __name__ == "__main__":
+    queries = get_queries_from_file()
 
     app = tornado.web.Application([
         tornado.web.url(r"/", MainHandler),
