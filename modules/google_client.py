@@ -15,7 +15,7 @@ class GoogleClient:
         # A dry run query completes immediately.
         assert query_job.state == 'DONE'
         assert query_job.dry_run
-        print("This query will process {} bytes.".format(query_job.total_bytes_processed))
+        print("This query will process {} Mbytes.".format(round(query_job.total_bytes_processed/(1024*1024))))
 
         # run to get data
         query_job = self._client.query(query)

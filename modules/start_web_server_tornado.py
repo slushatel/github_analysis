@@ -1,5 +1,4 @@
 import os
-import xml.etree.ElementTree
 from pathlib import Path
 
 import jsonpickle
@@ -9,8 +8,9 @@ import tornado.ioloop
 import tornado.web
 from modules import get_data
 from modules.helpers import response_value
-
-import plotly
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import json
 
 DIR_PROJECT_ROOT = (Path(__file__).parent.parent.resolve())
 DIR_RESOURCES = os.path.join(DIR_PROJECT_ROOT, "resources")
@@ -24,8 +24,7 @@ class MainHandler(tornado.web.RequestHandler):
             # print(query)
             query["reverse_url"] = self.reverse_url("function", query["id"])
             all_queries.append(query)
-            # self.write('<p><a href="{}">{}</a>'.format(self.reverse_url("function", query["id"]), query["text"]))
-        self.render("index.html", entries=all_queries)
+        self.render("index.html")
 
 
 class FunctionHandler(tornado.web.RequestHandler):
@@ -56,9 +55,6 @@ class FunctionHandler(tornado.web.RequestHandler):
 
 
 class ParametersHandler(tornado.web.RequestHandler):
-    def initialize(self, param1):
-        self.param1 = param1
-
     def get(self):
         self.set_header('Content-Type', 'application/json')
         parameters = []
@@ -68,25 +64,39 @@ class ParametersHandler(tornado.web.RequestHandler):
         self.write(jsonpickle.encode(parameters, unpicklable=False))
 
 
+def format_query(query):
+    if 'replacements' not in query or 'replace' not in query['replacements']:
+        return
+    for replace in query['replacements']['replace']:
+        replace_anchor = replace["replace_anchor"]
+        replace_base = replace["replace_base"]
+        replace_format = replace["replace_format"]
+        new_value = ""
+
+        if replace_base == "CURRENT_DATE":
+            base_date = datetime.now()
+            replace_relative = json.loads(replace["replace_date_relative"])
+            new_value = base_date + relativedelta(**replace_relative)
+        new_value = new_value.strftime(replace_format)
+        query["query_text"] = query["query_text"].replace(replace_anchor, new_value)
+        print(query["query_text"])
+
+
 def get_queries_from_file():
     print("project_root: {}".format(DIR_PROJECT_ROOT))
-    queries = xmltodict.parse(open(os.path.join(DIR_RESOURCES, "queries.xml")).read())
+    queries = xmltodict.parse(open(os.path.join(DIR_RESOURCES, "queries.xml")).read(), force_list={'replace'})
+    for query in queries['queries']['query']:
+        format_query(query)
     return queries
-
 
 if __name__ == "__main__":
     queries = get_queries_from_file()
     print(DIR_WEB)
-    settings = {
-        # "static_path": DIR_WEB,
-        # "static_url_prefix": "/",
-        "static_handler_args": dict(default_filename="index.html"),
-    }
     app = tornado.web.Application([
         tornado.web.url(r"/function/(.*)", FunctionHandler, dict(param1='param1'), name="function"),
-        tornado.web.url(r"/parameters", ParametersHandler, dict(param1='param1'), name="parameters"),
+        tornado.web.url(r"/parameters", ParametersHandler),
         tornado.web.url(r"/()$", tornado.web.StaticFileHandler, {'path': DIR_WEB + '\index.html'}),
         tornado.web.url(r"/(.*)", tornado.web.StaticFileHandler, {"path": DIR_WEB}),
-    ], **settings)
+    ])
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
