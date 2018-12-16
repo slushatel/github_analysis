@@ -1,4 +1,7 @@
 
 .parameter-link{
     cursor: pointer;
+    list-style-type: circle;
+    display: list-item;
+    margin-left: 1.3em;
 }

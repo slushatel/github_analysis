@@ -142,6 +142,48 @@ c#,1822411938644
 css,1270558514510
 assembly,888849026170
 
+top languages by percent of bytes for a year grouping by month
+#standardSQL
+with dataset as (
+SELECT concat(FORMAT_TIMESTAMP("%Y", created_at) ,".", FORMAT_TIMESTAMP("%m", created_at)) as ym, language, sum(bytes) bytes
+FROM `ghtorrent-bq.ght_2018_04_01.project_languages`
+where created_at between TIMESTAMP("2017-01-01") and TIMESTAMP("2018-01-01")
+group by ym, language)
+, sumbytes as (select ym, sum(bytes) as sb from dataset group by ym)
+, percents as(select ym , language, bytes/sb*100 perc from dataset join sumbytes using (ym))
+
+, flatperc as (select language, sum(p1) p1,sum(p2) p2,sum(p3) p3,sum(p4) p4,sum(p5) p5,sum(p6) p6
+  ,sum(p7) p7,sum(p8) p8,sum(p9) p9,sum(p10) p10,sum(p11) p11,sum(p12) p12  from (
+select language, perc p1, 0 p2,0 p3,0 p4,0 p5,0 p6,0 p7,0 p8,0 p9,0 p10,0 p11,0 p12 from percents where ym = "2017.01"
+union all
+select language, 0, perc,0,0,0,0,0,0,0,0,0,0 from percents where ym = "2017.02"
+union all
+select language, 0,0, perc,0,0,0,0,0,0,0,0,0 from percents where ym = "2017.03"
+union all
+select language, 0,0,0, perc,0,0,0,0,0,0,0,0 from percents where ym = "2017.04"
+union all
+select language, 0,0,0,0, perc,0,0,0,0,0,0,0 from percents where ym = "2017.05"
+union all
+select language, 0,0,0,0,0, perc,0,0,0,0,0,0 from percents where ym = "2017.06"
+union all
+select language, 0,0,0,0,0,0, perc,0,0,0,0,0 from percents where ym = "2017.07"
+union all
+select language, 0,0,0,0,0,0,0, perc,0,0,0,0 from percents where ym = "2017.08"
+union all
+select language, 0,0,0,0,0,0,0,0, perc,0,0,0 from percents where ym = "2017.09"
+union all
+select language, 0,0,0,0,0,0,0,0,0, perc,0,0 from percents where ym = "2017.10"
+union all
+select language, 0,0,0,0,0,0,0,0,0,0, perc,0 from percents where ym = "2017.11"
+union all
+select language, 0,0,0,0,0,0,0,0,0,0,0, perc from percents where ym = "2017.12"
+) group by language)
+select * from flatperc order by (p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12) desc limit 20
+
+
+
+
+
 
 
 

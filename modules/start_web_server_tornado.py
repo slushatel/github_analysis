@@ -39,20 +39,15 @@ class FunctionHandler(tornado.web.RequestHandler):
     def __get_query(self, query_id):
         for query in queries['queries']['query']:
             if query["id"] == query_id:
-                return query["query_text"]
+                return query
 
     def __get_data(self, query_id):
         query = self.__get_query(query_id)
         try:
-            df = get_data.GetData().runQuery(query)
-            # legend = 'Monthly Data'
-            # labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
-            # values = [10, 9, 8, 7, 6, 4, 7, 8]
-            #
-            # columns = df.columns.values;
-
+            df = get_data.GetData().runQuery(query["query_text"])
             chart_json = df.to_json()
-            response = response_value.ResponseValue().set_value(chart_json)
+            response = response_value.ResponseValue().set_value(
+                {"chart_json": chart_json, "chart_title": query["title"], "chart_datasets": query["data_sets"]})
         except Exception as e:
             response = response_value.ResponseValue().set_error(response_value.ResponseError("", str(e)))
 
@@ -69,7 +64,7 @@ class ParametersHandler(tornado.web.RequestHandler):
         parameters = []
         for query in queries['queries']['query']:
             query["reverse_url"] = self.reverse_url("function", query["id"])
-            parameters.append({"id": query["id"], "text": query["text"], "reverse_url": query["reverse_url"]})
+            parameters.append({"id": query["id"], "text": query["title"], "reverse_url": query["reverse_url"]})
         self.write(jsonpickle.encode(parameters, unpicklable=False))
 
 
