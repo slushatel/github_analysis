@@ -89,6 +89,7 @@ def get_queries_from_file():
         format_query(query)
     return queries
 
+
 if __name__ == "__main__":
     queries = get_queries_from_file()
     print(DIR_WEB)
