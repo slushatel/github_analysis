@@ -95,8 +95,9 @@ if __name__ == "__main__":
     app = tornado.web.Application([
         tornado.web.url(r"/function/(.*)", FunctionHandler, dict(param1='param1'), name="function"),
         tornado.web.url(r"/parameters", ParametersHandler),
-        tornado.web.url(r"/()$", tornado.web.StaticFileHandler, {'path': DIR_WEB + '\index.html'}),
-        tornado.web.url(r"/(.*)", tornado.web.StaticFileHandler, {"path": DIR_WEB}),
+        tornado.web.url(r"/(.*)", tornado.web.StaticFileHandler, {"path": DIR_WEB, "default_filename": "index.html"}),
+        # tornado.web.url(r"/()$", tornado.web.StaticFileHandler, {'path': DIR_WEB + '\index.html'}),
+        # tornado.web.url(r"/(.*)", tornado.web.StaticFileHandler, {"path": DIR_WEB}),
     ])
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
